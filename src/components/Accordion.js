@@ -29,6 +29,7 @@ const Accordion = (props)=>{
     
    ) 
   })
+  
   return <div className="ui styled accordion">
     {renderItems}
     
