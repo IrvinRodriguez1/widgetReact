@@ -4,10 +4,23 @@ import axios from 'axios'
 
 const Search = ()=>{
   
-  const [term, setTerm] = useState('')
+  const [term, setTerm] = useState('programing')
+  const [debounceTerm, setDebounceTerm]= useState(term)
   const [results, setResults] = useState([])
 
-  useEffect(() =>{
+
+  useEffect(()=>{
+    const timerId= setTimeout(()=>{
+      setDebounceTerm(term)
+    }, 750)
+
+    return ()=>{
+      clearTimeout(timerId)
+    }
+  },[term])
+
+
+  useEffect(()=>{
     const searchWiki = async ()=>{
       const {data}=await axios.get('https://en.wikipedia.org/w/api.php',
       {
@@ -16,31 +29,25 @@ const Search = ()=>{
           list: 'search',
           origin: '*',
           format: 'json',
-          srsearch: term
+          srsearch: debounceTerm
 
         }
       })
         
       setResults(data.query.search)
     }
-    
 
-    const timeOutID= setTimeout(()=>{
-      if(term){
-        searchWiki()
-      }
-    },750)
-   
-    return ()=>{
-      clearTimeout(timeOutID)
-    }
-  }, [term])
+    searchWiki();
+
+  }, [debounceTerm])
+
+
 
   const renderResults = results.map((item)=>{
     return(
       <div key={item.pageid} className='item'>
         <div className='right floated content'>
-          <a className='ui button' href={`https://en.wikipedia.org?curtid=${item.pageid}`}>GO</a>
+          <a className='ui button' href={`https://en.wikipedia.org?curid=${item.pageid}`}>GO</a>
         </div>
         <div className='content'>
           <div className='header'>
